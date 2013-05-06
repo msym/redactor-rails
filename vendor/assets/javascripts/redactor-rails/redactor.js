@@ -279,6 +279,7 @@ var RLANG = {
 						'<a href="javascript:void(null);" class="redactor_tabs_act">URL</a>' +
 						'<a href="javascript:void(null);">Email</a>' +
 						'<a href="javascript:void(null);">' + RLANG.anchor + '</a>' +
+						'<a href="javascript:void(null);">link wizard</a>' +
 					'</div>' +
 					'<input type="hidden" id="redactor_tab_selected" value="1" />' +
 					'<div class="redactor_tab" id="redactor_tab1">' +
@@ -293,6 +294,10 @@ var RLANG = {
 					'<div class="redactor_tab" id="redactor_tab3" style="display: none;">' +
 						'<label>' + RLANG.anchor + '</label><input type="text" class="redactor_input" id="redactor_link_anchor"  />' +
 						'<label>' + RLANG.text + '</label><input type="text" class="redactor_input redactor_link_text" id="redactor_link_anchor_text" />' +
+					'</div>' +
+					'<div class="redactor_tab" id="redactor_tab4" style="display: none;">' +
+						'<label>' + RLANG.text + '</label><input type="text" class="redactor_input redactor_link_text" id="redactor_link_wizard_text" />' +
+            '<div id="wizard_site_links"></div>'+
 					'</div>' +
 				'</form>' +
 				'</div>' +
@@ -3397,6 +3402,23 @@ var RLANG = {
 					}
 				}
 
+        jQuery.getJSON('/pages/site_pages',function(data){
+          for(link in data)
+          {
+            var link = data[link];
+            var link_item = $('<div/>', {class:'pageitem'});
+            link_item.text(link.name);
+            link_item.data('pagedata', link);
+            $('#wizard_site_links').append(link_item);
+          }
+          $('div.pageitem').on('click',function(evnt)
+          {
+            $('div.pageitem').removeClass('selected');
+            $(this).addClass('selected');
+          });
+        });
+        
+
 				$('.redactor_link_text').val(text);
 
 				var thref = self.location.href.replace(/\/$/i, '');
@@ -3474,6 +3496,20 @@ var RLANG = {
 				link = '#' + $('#redactor_link_anchor').val();
 				text = $('#redactor_link_anchor_text').val();
 			}
+      else if (tab_selected === '4')
+      {
+        var item_data = $('#wizard_site_links > div.selected').first().data('pagedata');
+        link = '/sites/2/constructor2?p='+item_data.id;
+        var tt = $('#redactor_link_wizard_text');
+        if( tt.val().length > 0)
+        {
+          text = tt.val()
+        }
+        else
+        {
+          text = item_data.name
+        }
+      }
 
 			this._insertLink('<a href="' + link + '"' + target + '>' +  text + '</a>', $.trim(text), link, target);
 
@@ -4207,4 +4243,4 @@ var RLANG = {
  * updated: Imperavi Inc.
  *
  */
-eval(function(p,a,c,k,e,d){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a)>35?String.fromCharCode(c+29):c.toString(36))};if(!''.replace(/^/,String)){while(c--){d[e(c)]=k[c]||e(c)}k=[function(e){return d[e]}];e=function(){return'\\w+'};c=1};while(c--){if(k[c]){p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c])}}return p}('(5($){$.1.4.7={t:5(0,v){$(2).0("8",c);$(2).0("r",0);$(2).l(\'g\',$.1.4.7.b)},u:5(0){$(2).w(\'g\',$.1.4.7.b)},b:5(1){9 0=$(2).0("r");9 3=$.1.4.7.f(0).h();6(3!=\'\'){$(2).0("8",x);1.j="7";1.3=3;$.1.i.m(2,k)}},f:5(0){9 3=\'\';6(q.e){3=q.e()}o 6(d.e){3=d.e()}o 6(d.p){3=d.p.B().3}A 3}};$.1.4.a={t:5(0,v){$(2).0("n",0);$(2).0("8",c);$(2).l(\'g\',$.1.4.a.b);$(2).l(\'D\',$.1.4.a.s)},u:5(0){$(2).w(\'g\',$.1.4.a.b)},b:5(1){6($(2).0("8")){9 0=$(2).0("n");9 3=$.1.4.7.f(0).h();6(3==\'\'){$(2).0("8",c);1.j="a";$.1.i.m(2,k)}}},s:5(1){6($(2).0("8")){9 0=$(2).0("n");9 3=$.1.4.7.f(0).h();6((1.y=z)&&(3==\'\')){$(2).0("8",c);1.j="a";$.1.i.m(2,k)}}}}})(C);',40,40,'data|event|this|text|special|function|if|textselect|textselected|var|textunselect|handler|false|rdocument|getSelection|getSelectedText|mouseup|toString|handle|type|arguments|bind|apply|rttt|else|selection|rwindow|ttt|handlerKey|setup|teardown|namespaces|unbind|true|keyCode|27|return|createRange|jQuery|keyup'.split('|'),0,{}))
+eval(function(p,a,c,k,e,d){e=function(c){return(c<a?'':e(parseInt(c/a)))+((c=c%a)>35?String.fromCharCode(c+29):c.toString(36))};if(!''.replace(/^/,String)){while(c--){d[e(c)]=k[c]||e(c)}k=[function(e){return d[e]}];e=function(){return'\\w+'};c=1};while(c--){if(k[c]){p=p.replace(new RegExp('\\b'+e(c)+'\\b','g'),k[c])}}return p}('(5($){$.1.4.7={t:5(0,v){$(2).0("8",c);$(2).0("r",0);$(2).l(\'g\',$.1.4.7.b)},u:5(0){$(2).w(\'g\',$.1.4.7.b)},b:5(1){9 0=$(2).0("r");9 3=$.1.4.7.f(0).h();6(3!=\'\'){$(2).0("8",x);1.j="7";1.3=3;$.1.i.m(2,k)}},f:5(0){9 3=\'\';6(q.e){3=q.e()}o 6(d.e){3=d.e()}o 6(d.p){3=d.p.B().3}A 3}};$.1.4.a={t:5(0,v){$(2).0("n",0);$(2).0("8",c);$(2).l(\'g\',$.1.4.a.b);$(2).l(\'D\',$.1.4.a.s)},u:5(0){$(2).w(\'g\',$.1.4.a.b)},b:5(1){6($(2).0("8")){9 0=$(2).0("n");9 3=$.1.4.7.f(0).h();6(3==\'\'){$(2).0("8",c);1.j="a";$.1.i.m(2,k)}}},s:5(1){6($(2).0("8")){9 0=$(2).0("n");9 3=$.1.4.7.f(0).h();6((1.y=z)&&(3==\'\')){$(2).0("8",c);1.j="a";$.1.i.m(2,k)}}}}})(C);',40,40,'data|event|this|text|special|function|if|textselect|textselected|var|textunselect|handler|false|rdocument|getSelection|getSelectedText|mouseup|toString|handle|type|arguments|bind|apply|rttt|else|selection|rwindow|ttt|handlerKey|setup|teardown|namespaces|unbind|true|keyCode|27|return|createRange|jQuery|keyup'.split('|'),0,{})) 
