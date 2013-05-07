@@ -16,7 +16,6 @@ if (typeof RELANG === 'undefined')
 {
 	var RELANG = {};
 }
-
 var RLANG = {
 	html: 'HTML',
 	video: 'Insert Video',
@@ -219,11 +218,25 @@ var RLANG = {
 			// modal windows container
 			modal_file: String() +
 				'<div id="redactor_modal_content">' +
+				'<div id="redactor_tabs">' +
+					'<a href="javascript:void(null);" class="redactor_tabs_act">' + RLANG.upload + '</a>' +
+					'<a href="javascript:void(null);">' + RLANG.choose + '</a>' +
+				'</div>' +
 				'<form id="redactorUploadFileForm" method="post" action="" enctype="multipart/form-data">' +
-					'<label>Name (optional)</label>' +
-					'<input type="text" id="redactor_filename" class="redactor_input" />' +
-					'<div style="margin-top: 7px;">' +
-						'<input type="file" id="redactor_file" name="file" />' +
+					'<div id="redactor_tab1" class="redactor_tab">' +
+						'<label>Name (optional)</label>' +
+						'<input type="text" id="redactor_filename" class="redactor_input" />' +
+						'<div style="margin-top: 7px;">' +
+							'<input type="file" id="redactor_file" name="file" />' +
+						'</div>' +
+					'</div>' +
+					'<div id="redactor_tab2" class="redactor_tab" style="display: none;">' +
+						'<div id="wizard_select_file">' +
+						'</div>' +
+						'<div id="redactor_modal_footer">' +
+							'<a href="javascript:void(null);" class="redactor_modal_btn redactor_btn_modal_close">' + RLANG.cancel + '</a>' +
+							'<input type="button" name="upload" class="redactor_modal_btn" id="redactor_upload_btn" value="' + RLANG.insert + '" />' +
+						'</div>' +
 					'</div>' +
 				'</form><br>' +
 				'</div>',
@@ -3587,10 +3600,36 @@ var RLANG = {
 					error: $.proxy(this.opts.fileUploadErrorCallback, this)
 				});
 
+
+				jQuery.getJSON('/sites/files',function(data){
+						for(link in data)
+						{
+							var link = data[link];
+							var link_item = $('<div/>', {class:'pageitem'});
+							link_item.text(link.filename);
+							link_item.data('file_data', link);
+							$('#wizard_select_file').append(link_item);
+						}
+						$('div.pageitem').click(function(evnt)
+						{
+							var current_item = $(evnt.target);
+							$('div.pageitem').removeClass('selected');
+							current_item.addClass('selected');
+						});
+					});
+				$('#redactor_upload_btn').click($.proxy(this.fileInsertSelected, this));
 			}, this);
 
 			this.modalInit(RLANG.file, this.opts.modal_file, 500, callback);
 		},
+		fileInsertSelected: function()
+		{
+			var selected_file = $('#wizard_select_file').find('div.selected').first();
+			var link = selected_file.data('file_data').url;
+			var target = '';
+			var text = selected_file.data('file_data').filename;
+			this._insertLink('<a href="' + link + '"' + target + '>' +  text + '</a>', $.trim(text), link, target);
+    },
 		fileUploadCallback: function(json)
 		{
 			this.restoreSelection();
@@ -3907,6 +3946,7 @@ var RLANG = {
 					var rawString = d.body.innerHTML;
 					var jsonString = rawString.match(/\{(.|\n)*\}/)[0];
 					var json = $.parseJSON(jsonString);
+          console.log(json);
 
 					if (typeof json.error == 'undefined')
 					{
