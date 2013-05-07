@@ -3608,6 +3608,8 @@ var RLANG = {
 							var link_item = $('<div/>', {class:'pageitem'});
 							link_item.text(link.filename);
 							link_item.data('file_data', link);
+							var ft_class = link.filename.split('.').pop().toLowerCase();
+							link_item.addClass('ft-'+ft_class);
 							$('#wizard_select_file').append(link_item);
 						}
 						$('div.pageitem').click(function(evnt)
