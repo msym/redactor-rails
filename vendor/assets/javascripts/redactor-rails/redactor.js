@@ -311,8 +311,6 @@ var RLANG = {
 					'<div class="redactor_tab" id="redactor_tab4" style="display: none;">' +
 						'<label>' + RLANG.text + '</label><input type="text" class="redactor_input redactor_link_text" id="redactor_link_wizard_text" />' +
             '<div id="wizard_site_links"></div>'+
-					'</div>' +
-				'</form>' +
 				'</div>' +
 				'<div id="redactor_modal_footer">' +
 					'<a href="javascript:void(null);" class="redactor_modal_btn redactor_btn_modal_close">' + RLANG.cancel + '</a>' +
@@ -3601,15 +3599,20 @@ var RLANG = {
 				});
 
 
-				jQuery.getJSON('/sites/files',function(data){
+				jQuery.getJSON('/sites/files',$.proxy(function(data){
 						for(link in data)
 						{
 							var link = data[link];
 							var link_item = $('<div/>', {class:'pageitem'});
 							link_item.text(link.filename);
 							link_item.data('file_data', link);
-							var ft_class = link.filename.split('.').pop().toLowerCase();
-							link_item.addClass('ft-'+ft_class);
+							var ft_class = this.getFileType(link.filename);
+              if( ft_class.length > 0 )
+              {
+                ft_class = 'ft-'+ft_class;
+                link_item.addClass(ft_class);
+                link_item.data('ftclass', ft_class);
+              }
 							$('#wizard_select_file').append(link_item);
 						}
 						$('div.pageitem').click(function(evnt)
@@ -3618,7 +3621,7 @@ var RLANG = {
 							$('div.pageitem').removeClass('selected');
 							current_item.addClass('selected');
 						});
-					});
+					},this));
 				$('#redactor_upload_btn').click($.proxy(this.fileInsertSelected, this));
 			}, this);
 
@@ -3630,7 +3633,26 @@ var RLANG = {
 			var link = selected_file.data('file_data').url;
 			var target = '';
 			var text = selected_file.data('file_data').filename;
-			this._insertLink('<a href="' + link + '"' + target + '>' +  text + '</a>', $.trim(text), link, target);
+      var klass = '';
+      if(typeof selected_file.data('ftclass') !== undefined)
+      {
+        klass = ' class="'+selected_file.data('ftclass')+'"';
+      }
+			this._insertLink('<a href="' + link + '"' + target + klass +'>' +  text + '</a>', $.trim(text), link, target);
+    },
+    getFileType: function(filename)
+    {
+      var ft_class = filename.split('.').pop().toLowerCase();
+      return ft_class;
+    },
+    getFtClass: function(filename, _this)
+    {
+      var ft_class = _this.getFileType(filename);
+      if( ft_class.length > 0 )
+      {
+        return ' class="ft-'+ft_class+'"';
+      }
+      return '';
     },
 		fileUploadCallback: function(json)
 		{
@@ -3644,8 +3666,8 @@ var RLANG = {
 				{
 					text = json.filename;
 				}
-
-				var link = '<a href="' + json.filelink + '">' + text + '</a>';
+        var ft_class = this.getFtClass(json.filename,this);
+				var link = '<a href="' + json.filelink + '"' + ft_class + '>' + text + '</a>';
 
 				// chrome fix
 				if (this.browser('webkit') && !!this.window.chrome)
@@ -3948,7 +3970,6 @@ var RLANG = {
 					var rawString = d.body.innerHTML;
 					var jsonString = rawString.match(/\{(.|\n)*\}/)[0];
 					var json = $.parseJSON(jsonString);
-          console.log(json);
 
 					if (typeof json.error == 'undefined')
 					{
