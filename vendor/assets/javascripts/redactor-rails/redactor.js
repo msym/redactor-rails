@@ -163,6 +163,10 @@ var RLANG = {
 			fileUploadCallback: false, // function
 			fileUploadErrorCallback: false, // function
 
+			videoUpload: false, // url
+			videoUploadCallback: false, // function
+			videoUploadErrorCallback: false, // function
+
 			uploadCrossDomain: false,
 			uploadFields: false,
 
@@ -175,7 +179,7 @@ var RLANG = {
 					"img", "video", "source", "track", "audio", "iframe", "object", "embed", "param", "blockquote",
 					"mark", "cite", "small", "ul", "ol", "li", "hr", "dl", "dt", "dd", "sup", "sub",
 					"big", "pre", "code", "figure", "figcaption", "strong", "em", "table", "tr", "td",
-					"th", "tbody", "thead", "tfoot", "h1", "h2", "h3", "h4", "h5", "h6"],
+					"th", "tbody", "thead", "tfoot", "h1", "h2", "h3", "h4", "h5", "h6", "object"],
 
 			toolbarExternal: false, // ID selector
 
@@ -292,7 +296,7 @@ var RLANG = {
 						'<a href="javascript:void(null);" class="redactor_tabs_act">URL</a>' +
 						'<a href="javascript:void(null);">Email</a>' +
 						'<a href="javascript:void(null);">' + RLANG.anchor + '</a>' +
-						'<a href="javascript:void(null);">link wizard</a>' +
+						'<a href="javascript:void(null);">Выбрать</a>' +
 					'</div>' +
 					'<input type="hidden" id="redactor_tab_selected" value="1" />' +
 					'<div class="redactor_tab" id="redactor_tab1">' +
@@ -333,9 +337,19 @@ var RLANG = {
 
 			modal_video: String() +
 				'<div id="redactor_modal_content">' +
+					'<div id="redactor_tabs">' +
+						'<a href="javascript:void(null);" class="redactor_tabs_act">Загрузить</a>' +
+						'<a href="javascript:void(null);">Код</a>' +
+					'</div>' +
 				'<form id="redactorInsertVideoForm">' +
-					'<label>' + RLANG.video_html_code + '</label>' +
-					'<textarea id="redactor_insert_video_area" style="width: 99%; height: 160px;"></textarea>' +
+					'<input type="hidden" id="redactor_tab_selected" value="1" />' +
+					'<div class="redactor_tab" id="redactor_tab1">' +
+							'<input type="file" id="redactor_file" name="file" />' +
+					'</div>' +
+					'<div class="redactor_tab" id="redactor_tab2" style="display:none">' +
+            '<label>' + RLANG.video_html_code + '</label>' +
+            '<textarea id="redactor_insert_video_area" style="width: 99%; height: 160px;"></textarea>' +
+					'</div>' +
 				'</form>' +
 				'</div>'+
 				'<div id="redactor_modal_footer">' +
@@ -1110,9 +1124,11 @@ var RLANG = {
 				// conver newlines to p
 				html = this.paragraphy(html);
 
+          console.log(html);
 				// enable
 				if (this.$editor)
 				{
+          console.log(html);
 					this.$editor.html(html);
 				}
 
@@ -1126,6 +1142,7 @@ var RLANG = {
 				if (this.$el.get(0).tagName !== 'TEXTAREA')
 				{
 					var html = this.$el.val();
+          console.log(html);
 					var textarea = $('<textarea name="' + this.$editor.attr('id') + '"></textarea>').css('height', this.height).val(html);
 					this.$el.hide();
 					this.$el.after(textarea);
@@ -1712,6 +1729,7 @@ var RLANG = {
 			var tags = /<\/?([a-z][a-z0-9]*)\b[^>]*>/gi;
 			return html.replace(tags, function ($0, $1)
 			{
+        console.log($0,$1);
 				return $.inArray($1.toLowerCase(), allowed) > '-1' ? $0 : '';
 			});
 		},
@@ -3081,18 +3099,50 @@ var RLANG = {
 						$('#redactor_insert_video_area').focus();
 					}, 200);
 
+          this.uploadInit('redactor_file',
+          {
+            auto: true,
+            url: this.opts.videoUpload,
+            success: $.proxy(this.videoUploadCallback, this),
+            error: $.proxy(this.opts.videoUploadErrorCallback, this)
+          });
+
 				}, this)
 			);
 		},
 		insertVideo: function()
 		{
-			var data = $('#redactor_insert_video_area').val();
-			data = this.stripTags(data);
+			var tab_selected = $('#redactor_tab_selected').val();
+      var data = '';
+      if( tab_selected == '1' )
+      {
+				this.uploadInit('redactor_file',
+				{
+					auto: true,
+					url: this.opts.videoUpload,
+					success: $.proxy(this.videoUploadCallback, this),
+					error: $.proxy(this.opts.videoUploadErrorCallback, this)
+				});
+      }
+      else if( tab_selected == '2')
+      {
+        data = $('#redactor_insert_video_area').val();
+        data = this.stripTags(data);
+        this.restoreSelection();
+        this.execCommand('inserthtml', data);
+        this.modalClose();
+      }
 
-			this.restoreSelection();
-			this.execCommand('inserthtml', data);
-			this.modalClose();
 		},
+    videoUploadCallback: function(json)
+    {
+      var html = '<div class="player" style="width:80%;height: 300px"' +
+          'data-filelink="' + json.filelink +'"' +
+          '></div>';
+      this.execCommand('inserthtml',html);
+      this.$el.trigger('updateplayers');
+      this.modalClose();
+    },
 
 		// INSERT IMAGE
 		imageEdit: function(e)
@@ -3842,6 +3892,7 @@ var RLANG = {
 				$(this.uploadOptions.input).change($.proxy(function()
 				{
 					this.element.submit(function(e) { return false; });
+
 					this.uploadSubmit();
 				}, this));
 
@@ -3948,7 +3999,6 @@ var RLANG = {
 					var rawString = d.body.innerHTML;
 					var jsonString = rawString.match(/\{(.|\n)*\}/)[0];
 					var json = $.parseJSON(jsonString);
-          console.log(json);
 
 					if (typeof json.error == 'undefined')
 					{
