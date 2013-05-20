@@ -29,4 +29,8 @@ module RedactorRails
   def self.document_model
     RedactorRails::Document
   end
+
+  def self.video_model
+    RedactorRails::Video
+  end
 end

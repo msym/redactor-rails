@@ -294,8 +294,6 @@ var RLANG = {
 				'<form id="redactorInsertLinkForm" method="post" action="">' +
 					'<div id="redactor_tabs">' +
 						'<a href="javascript:void(null);" class="redactor_tabs_act">URL</a>' +
-						'<a href="javascript:void(null);">Email</a>' +
-						'<a href="javascript:void(null);">' + RLANG.anchor + '</a>' +
 						'<a href="javascript:void(null);">Выбрать</a>' +
 					'</div>' +
 					'<input type="hidden" id="redactor_tab_selected" value="1" />' +
@@ -305,14 +303,6 @@ var RLANG = {
 						'<label><input type="checkbox" id="redactor_link_blank"> ' + RLANG.link_new_tab + '</label>' +
 					'</div>' +
 					'<div class="redactor_tab" id="redactor_tab2" style="display: none;">' +
-						'<label>Email</label><input type="text" id="redactor_link_mailto" class="redactor_input" />' +
-						'<label>' + RLANG.text + '</label><input type="text" class="redactor_input redactor_link_text" id="redactor_link_mailto_text" />' +
-					'</div>' +
-					'<div class="redactor_tab" id="redactor_tab3" style="display: none;">' +
-						'<label>' + RLANG.anchor + '</label><input type="text" class="redactor_input" id="redactor_link_anchor"  />' +
-						'<label>' + RLANG.text + '</label><input type="text" class="redactor_input redactor_link_text" id="redactor_link_anchor_text" />' +
-					'</div>' +
-					'<div class="redactor_tab" id="redactor_tab4" style="display: none;">' +
 						'<label>' + RLANG.text + '</label><input type="text" class="redactor_input redactor_link_text" id="redactor_link_wizard_text" />' +
             '<div id="wizard_site_links"></div>'+
 					'</div>' +
@@ -338,13 +328,14 @@ var RLANG = {
 			modal_video: String() +
 				'<div id="redactor_modal_content">' +
 					'<div id="redactor_tabs">' +
-						'<a href="javascript:void(null);" class="redactor_tabs_act">Загрузить</a>' +
+						'<a href="javascript:void(null);" class="redactor_tabs_act">Youtube</a>' +
 						'<a href="javascript:void(null);">Код</a>' +
 					'</div>' +
 				'<form id="redactorInsertVideoForm">' +
 					'<input type="hidden" id="redactor_tab_selected" value="1" />' +
 					'<div class="redactor_tab" id="redactor_tab1">' +
-							'<input type="file" id="redactor_file" name="file" />' +
+              '<label>CCылка на Уoutube</label>' +
+							'<input type="text" id="redactor_file" class="redactor_input" name="file" />' +
 					'</div>' +
 					'<div class="redactor_tab" id="redactor_tab2" style="display:none">' +
             '<label>' + RLANG.video_html_code + '</label>' +
@@ -1124,11 +1115,9 @@ var RLANG = {
 				// conver newlines to p
 				html = this.paragraphy(html);
 
-          console.log(html);
 				// enable
 				if (this.$editor)
 				{
-          console.log(html);
 					this.$editor.html(html);
 				}
 
@@ -1142,7 +1131,6 @@ var RLANG = {
 				if (this.$el.get(0).tagName !== 'TEXTAREA')
 				{
 					var html = this.$el.val();
-          console.log(html);
 					var textarea = $('<textarea name="' + this.$editor.attr('id') + '"></textarea>').css('height', this.height).val(html);
 					this.$el.hide();
 					this.$el.after(textarea);
@@ -1729,7 +1717,6 @@ var RLANG = {
 			var tags = /<\/?([a-z][a-z0-9]*)\b[^>]*>/gi;
 			return html.replace(tags, function ($0, $1)
 			{
-        console.log($0,$1);
 				return $.inArray($1.toLowerCase(), allowed) > '-1' ? $0 : '';
 			});
 		},
@@ -3099,14 +3086,6 @@ var RLANG = {
 						$('#redactor_insert_video_area').focus();
 					}, 200);
 
-          this.uploadInit('redactor_file',
-          {
-            auto: true,
-            url: this.opts.videoUpload,
-            success: $.proxy(this.videoUploadCallback, this),
-            error: $.proxy(this.opts.videoUploadErrorCallback, this)
-          });
-
 				}, this)
 			);
 		},
@@ -3116,13 +3095,15 @@ var RLANG = {
       var data = '';
       if( tab_selected == '1' )
       {
-				this.uploadInit('redactor_file',
-				{
-					auto: true,
-					url: this.opts.videoUpload,
-					success: $.proxy(this.videoUploadCallback, this),
-					error: $.proxy(this.opts.videoUploadErrorCallback, this)
-				});
+        'https://www.youtube.com/watch?v=cJEZQHwLO2k&list=PLrFm_xIK4FbZ6YL-DFjHEEo2-mNNUYuwc'
+        var url = $('#redactor_file').val()
+        var video_id = url.match(/v=([^&]+)/)[1];
+        var html = '<iframe id="ytplayer" type="text/html" width="640" height="390"'+
+          'src="http://www.youtube.com/embed/'+video_id+'?autoplay=0"'+
+            'frameborder="0"/>';
+        this.restoreSelection();
+        this.execCommand('inserthtml', html);
+        this.modalClose();
       }
       else if( tab_selected == '2')
       {
@@ -3549,17 +3530,7 @@ var RLANG = {
 				}
 
 			}
-			else if (tab_selected === '2') // mailto
-			{
-				link = 'mailto:' + $('#redactor_link_mailto').val();
-				text = $('#redactor_link_mailto_text').val();
-			}
-			else if (tab_selected === '3') // anchor
-			{
-				link = '#' + $('#redactor_link_anchor').val();
-				text = $('#redactor_link_anchor_text').val();
-			}
-      else if (tab_selected === '4')
+      else if (tab_selected === '2')
       {
         var item_data = $('#wizard_site_links > div.selected').first().data('pagedata');
         link = '/sites/2/constructor2?p='+item_data.id;
