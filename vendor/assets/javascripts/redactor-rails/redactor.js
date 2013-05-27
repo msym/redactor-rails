@@ -167,6 +167,8 @@ var RLANG = {
 			videoUploadCallback: false, // function
 			videoUploadErrorCallback: false, // function
 
+			sitePages: false, // url
+
 			uploadCrossDomain: false,
 			uploadFields: false,
 
@@ -304,7 +306,7 @@ var RLANG = {
 					'</div>' +
 					'<div class="redactor_tab" id="redactor_tab2" style="display: none;">' +
 						'<label>' + RLANG.text + '</label><input type="text" class="redactor_input redactor_link_text" id="redactor_link_wizard_text" />' +
-            '<div id="wizard_site_links"></div>'+
+						'<div id="wizard_site_links"></div>'+
 				'</div>' +
 				'<div id="redactor_modal_footer">' +
 					'<a href="javascript:void(null);" class="redactor_modal_btn redactor_btn_modal_close">' + RLANG.cancel + '</a>' +
@@ -332,12 +334,12 @@ var RLANG = {
 				'<form id="redactorInsertVideoForm">' +
 					'<input type="hidden" id="redactor_tab_selected" value="1" />' +
 					'<div class="redactor_tab" id="redactor_tab1">' +
-              '<label>CCылка на Уoutube</label>' +
+							'<label>CCылка на Уoutube</label>' +
 							'<input type="text" id="redactor_file" class="redactor_input" name="file" />' +
 					'</div>' +
 					'<div class="redactor_tab" id="redactor_tab2" style="display:none">' +
-            '<label>' + RLANG.video_html_code + '</label>' +
-            '<textarea id="redactor_insert_video_area" style="width: 99%; height: 160px;"></textarea>' +
+						'<label>' + RLANG.video_html_code + '</label>' +
+						'<textarea id="redactor_insert_video_area" style="width: 99%; height: 160px;"></textarea>' +
 					'</div>' +
 				'</form>' +
 				'</div>'+
@@ -686,7 +688,7 @@ var RLANG = {
 
 			function afterBuild()
 			{
-	      		// air enable
+						// air enable
 				this.enableAir();
 
 				// toolbar
@@ -827,7 +829,7 @@ var RLANG = {
 			}
 
 			// construct editor
-		    this.build(false, afterBuild);
+				this.build(false, afterBuild);
 
 		},
 		shortcuts: function(e, cmd)
@@ -1896,7 +1898,7 @@ var RLANG = {
 		},
 		formattingEmptyTags: function(html)
 		{
-			var etags = ["<pre></pre>","<blockquote>\\s*</blockquote>","<em>\\s*</em>","<ul></ul>","<ol></ol>","<li></li>","<table></table>","<tr></tr>","<span>\\s*<span>", "<span>&nbsp;<span>", "<b>\\s*</b>", "<b>&nbsp;</b>", "<p>\\s*</p>", "<p>&nbsp;</p>",  "<p>\\s*<br>\\s*</p>", "<div>\\s*</div>", "<div>\\s*<br>\\s*</div>"];
+			var etags = ["<pre></pre>","<blockquote>\\s*</blockquote>","<em>\\s*</em>","<ul></ul>","<ol></ol>","<li></li>","<table></table>","<tr></tr>","<span>\\s*<span>", "<span>&nbsp;<span>", "<b>\\s*</b>", "<b>&nbsp;</b>", "<p>\\s*</p>", "<p>&nbsp;</p>",	"<p>\\s*<br>\\s*</p>", "<div>\\s*</div>", "<div>\\s*<br>\\s*</div>"];
 			for (var i = 0; i < etags.length; ++i)
 			{
 				var bbb = etags[i];
@@ -2765,7 +2767,7 @@ var RLANG = {
 		insertNodeAfterCaret: function(node)
 		{
 			this.saveSelection();
-		    this.insertNodeAtCaret(node);
+				this.insertNodeAtCaret(node);
 			this.restoreSelection();
 		},
 
@@ -2841,7 +2843,7 @@ var RLANG = {
 			var min_h = 10;
 
 			$(resize).off('hover mousedown mouseup click mousemove');
- 			$(resize).hover(function() { $(resize).css('cursor', 'nw-resize'); }, function() { $(resize).css('cursor',''); clicked = false; });
+			$(resize).hover(function() { $(resize).css('cursor', 'nw-resize'); }, function() { $(resize).css('cursor',''); clicked = false; });
 
 			$(resize).mousedown(function(e)
 			{
@@ -3090,38 +3092,38 @@ var RLANG = {
 		insertVideo: function()
 		{
 			var tab_selected = $('#redactor_tab_selected').val();
-      var data = '';
-      if( tab_selected == '1' )
-      {
-        'https://www.youtube.com/watch?v=cJEZQHwLO2k&list=PLrFm_xIK4FbZ6YL-DFjHEEo2-mNNUYuwc'
-        var url = $('#redactor_file').val()
-        var video_id = url.match(/v=([^&]+)/)[1];
-        var html = '<iframe id="ytplayer" type="text/html" width="640" height="390"'+
-          'src="http://www.youtube.com/embed/'+video_id+'?autoplay=0"'+
-            'frameborder="0"/>';
-        this.restoreSelection();
-        this.execCommand('inserthtml', html);
-        this.modalClose();
-      }
-      else if( tab_selected == '2')
-      {
-        data = $('#redactor_insert_video_area').val();
-        data = this.stripTags(data);
-        this.restoreSelection();
-        this.execCommand('inserthtml', data);
-        this.modalClose();
-      }
+			var data = '';
+			if( tab_selected == '1' )
+			{
+				'https://www.youtube.com/watch?v=cJEZQHwLO2k&list=PLrFm_xIK4FbZ6YL-DFjHEEo2-mNNUYuwc'
+				var url = $('#redactor_file').val()
+				var video_id = url.match(/v=([^&]+)/)[1];
+				var html = '<iframe id="ytplayer" type="text/html" width="640" height="390"'+
+					'src="http://www.youtube.com/embed/'+video_id+'?autoplay=0"'+
+						'frameborder="0"/>';
+				this.restoreSelection();
+				this.execCommand('inserthtml', html);
+				this.modalClose();
+			}
+			else if( tab_selected == '2')
+			{
+				data = $('#redactor_insert_video_area').val();
+				data = this.stripTags(data);
+				this.restoreSelection();
+				this.execCommand('inserthtml', data);
+				this.modalClose();
+			}
 
 		},
-    videoUploadCallback: function(json)
-    {
-      var html = '<div class="player" style="width:80%;height: 300px"' +
-          'data-filelink="' + json.filelink +'"' +
-          '></div>';
-      this.execCommand('inserthtml',html);
-      this.$el.trigger('updateplayers');
-      this.modalClose();
-    },
+		videoUploadCallback: function(json)
+		{
+			var html = '<div class="player" style="width:80%;height: 300px"' +
+					'data-filelink="' + json.filelink +'"' +
+					'></div>';
+			this.execCommand('inserthtml',html);
+			this.$el.trigger('updateplayers');
+			this.modalClose();
+		},
 
 		// INSERT IMAGE
 		imageEdit: function(e)
@@ -3444,22 +3446,29 @@ var RLANG = {
 					}
 				}
 
-        jQuery.getJSON('/pages/site_pages',function(data){
-          for(link in data)
-          {
-            var link = data[link];
-            var link_item = $('<div/>', {class:'pageitem'});
-            link_item.text(link.name);
-            link_item.data('pagedata', link);
-            $('#wizard_site_links').append(link_item);
-          }
-          $('div.pageitem').on('click',function(evnt)
-          {
-            $('div.pageitem').removeClass('selected');
-            $(this).addClass('selected');
-          });
-        });
-        
+
+				if( this.opts.sitePages )
+				{
+					jQuery.getJSON(this.opts.sitePages, function(data){
+						for(link in data)
+						{
+							var link = data[link];
+							var link_item = $('<div/>', {class:'pageitem'});
+							link_item.text(link.name);
+							link_item.data('pagedata', link);
+							$('#wizard_site_links').append(link_item);
+						}
+						$('div.pageitem').on('click',function(evnt)
+						{
+							$('div.pageitem').removeClass('selected');
+							$(this).addClass('selected');
+						});
+					});
+				}
+				else
+				{
+					$('#wizard_site_links').text('Невозможно получить список страниц');
+				}
 
 				$('.redactor_link_text').val(text);
 
@@ -3528,22 +3537,22 @@ var RLANG = {
 				}
 
 			}
-      else if (tab_selected === '2')
-      {
-        var item_data = $('#wizard_site_links > div.selected').first().data('pagedata');
-        link = '/sites/2/constructor2?p='+item_data.id;
-        var tt = $('#redactor_link_wizard_text');
-        if( tt.val().length > 0)
-        {
-          text = tt.val()
-        }
-        else
-        {
-          text = item_data.name
-        }
-      }
+			else if (tab_selected === '2')
+			{
+				var item_data = $('#wizard_site_links > div.selected').first().data('pagedata');
+				link = item_data.href;
+				var tt = $('#redactor_link_wizard_text');
+				if( tt.val().length > 0)
+				{
+					text = tt.val()
+				}
+				else
+				{
+					text = item_data.name
+				}
+			}
 
-			this._insertLink('<a href="' + link + '"' + target + '>' +  text + '</a>', $.trim(text), link, target);
+			this._insertLink('<a href="' + link + '"' + target + '>' +	text + '</a>', $.trim(text), link, target);
 
 		},
 		_insertLink: function(a, text, link, target)
@@ -3628,12 +3637,12 @@ var RLANG = {
 							link_item.text(link.filename);
 							link_item.data('file_data', link);
 							var ft_class = this.getFileType(link.filename);
-              if( ft_class.length > 0 )
-              {
-                ft_class = 'ft-'+ft_class;
-                link_item.addClass(ft_class);
-                link_item.data('ftclass', ft_class);
-              }
+							if( ft_class.length > 0 )
+							{
+								ft_class = 'ft-'+ft_class;
+								link_item.addClass(ft_class);
+								link_item.data('ftclass', ft_class);
+							}
 							$('#wizard_select_file').append(link_item);
 						}
 						$('div.pageitem').click(function(evnt)
@@ -3654,27 +3663,27 @@ var RLANG = {
 			var link = selected_file.data('file_data').url;
 			var target = '';
 			var text = selected_file.data('file_data').filename;
-      var klass = '';
-      if(typeof selected_file.data('ftclass') !== undefined)
-      {
-        klass = ' class="'+selected_file.data('ftclass')+'"';
-      }
+			var klass = '';
+			if(typeof selected_file.data('ftclass') !== undefined)
+			{
+				klass = ' class="'+selected_file.data('ftclass')+'"';
+			}
 			this._insertLink('<a href="' + link + '"' + target + klass +'>' +  text + '</a>', $.trim(text), link, target);
-    },
-    getFileType: function(filename)
-    {
-      var ft_class = filename.split('.').pop().toLowerCase();
-      return ft_class;
-    },
-    getFtClass: function(filename, _this)
-    {
-      var ft_class = _this.getFileType(filename);
-      if( ft_class.length > 0 )
-      {
-        return ' class="ft-'+ft_class+'"';
-      }
-      return '';
-    },
+		},
+		getFileType: function(filename)
+		{
+			var ft_class = filename.split('.').pop().toLowerCase();
+			return ft_class;
+		},
+		getFtClass: function(filename, _this)
+		{
+			var ft_class = _this.getFileType(filename);
+			if( ft_class.length > 0 )
+			{
+				return ' class="ft-'+ft_class+'"';
+			}
+			return '';
+		},
 		fileUploadCallback: function(json)
 		{
 			this.restoreSelection();
@@ -3687,7 +3696,7 @@ var RLANG = {
 				{
 					text = json.filename;
 				}
-        var ft_class = this.getFtClass(json.filename,this);
+				var ft_class = this.getFtClass(json.filename,this);
 				var link = '<a href="' + json.filelink + '"' + ft_class + '>' + text + '</a>';
 
 				// chrome fix
@@ -3924,7 +3933,7 @@ var RLANG = {
 			{
 				var formId = 'redactorUploadForm' + this.id;
 				var fileId = 'redactorUploadFile' + this.id;
-				this.form = $('<form  action="' + this.uploadOptions.url + '" method="POST" target="' + name + '" name="' + formId + '" id="' + formId + '" enctype="multipart/form-data"></form>');
+				this.form = $('<form	action="' + this.uploadOptions.url + '" method="POST" target="' + name + '" name="' + formId + '" id="' + formId + '" enctype="multipart/form-data"></form>');
 
 				// append hidden fields
 				if (this.opts.uploadFields !== false && typeof this.opts.uploadFields === 'object')
