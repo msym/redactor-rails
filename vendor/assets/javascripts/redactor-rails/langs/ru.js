@@ -55,6 +55,7 @@ RELANG['ru'] = {
 	choose: 'Выбрать',
 	or_choose: 'Или выберите',
 	drop_file_here: 'Перетащите файл сюда',
+  alignment: 'Выравнивание',
 	align_left:	'По левому краю',	
 	align_center: 'По центру',
 	align_right: 'По правому краю',
