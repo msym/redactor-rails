@@ -7,9 +7,19 @@ $(document).ready(
     params = csrf_param + "=" + encodeURIComponent(csrf_token);
   }
   $('.redactor').redactor(
-    { "imageUpload":"/redactor_rails/pictures?" + params,
-      "imageGetJson":"/redactor_rails/pictures",
+    { "imageUpload":"/pictures?" + params,
+      "imageUploadErrorCallback": function(obj, json) { alert(json.error); },
+      "imageGetJson":"/pictures",
+      "fileUpload":"/documents?" + params,
+      "fileUploadErrorCallback": function(obj, json) { alert(json.error); },
+      "fileGetJson":"/documents",
+      "videoUpload":"/videos?"+ params,
+      "videoUploadErrorCallback": function(obj, json) { alert(json.error); },
+      "sitePages": "/pages/site_pages",
       "path":"/assets/redactor-rails",
-      "css":"style.css"}
+      "css":"style.css",
+      "minHeight": 200,
+      "mobile": false,
+      "lang":"ru"}
   );
 });
